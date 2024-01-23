@@ -25,21 +25,24 @@ function setup() {
         16:"#FFFFFF" // snow
     }
     SHRINK_COEFF_RANDOM = .45;
-    
-    grid = [];
-    range_height = [1, 16];
-    range_random = [-8, 4];
-    step = 1;
+    FIX_HEIGHT_ALONE_POINT = 8; //cell surrounded by X different heights will be one of them
+    RANGE_HEIGHT = [1, 16];
+    RANGE_RANDOM = [-8, 4];
 
+    grid = [];
+    current_range_random = [...RANGE_RANDOM];
+    step = 1;
     tmp_size = GRID_SIZE; // for interactive mode
 
-    createCanvas(1900, 940);
+    let cvn = createCanvas(GRID_SIZE*TILE_SIZE, GRID_SIZE*TILE_SIZE);
+    cvn.id('map');
+    cvn.parent("left");
 
     initGrid();
 
     if (!INTERACTIVE_MODE) {
         calculateHeights(GRID_SIZE);
-        fixHeightAlonePoints(8);
+        fixHeightAlonePoints(FIX_HEIGHT_ALONE_POINT);
         drawHeightMap();
         generateBorders();
     }
@@ -62,8 +65,8 @@ function calculateHeights(size) {
         }
     }
 
-    shrinkRangeRandom();
     step++;
+    shrinkRangeRandom();
 
     if (INTERACTIVE_MODE) {
 
@@ -84,6 +87,25 @@ function keyReleased() {
 
             tmp_size = calculateHeights(tmp_size);
         }
+    }
+
+    if (keyCode === RETURN) {
+
+        let timeStamp = year() + "-" + month() + "-" + day() + "-" + hour() + "-" + minute() + "-" + second() + "-" + nf(millis(), 3, 0);
+
+        save(timeStamp + '.png');
+    }
+
+    if (keyCode === SHIFT) {
+
+        step = 1;
+        current_range_random = [...RANGE_RANDOM];
+
+        initGrid();
+        calculateHeights(GRID_SIZE);
+        fixHeightAlonePoints(FIX_HEIGHT_ALONE_POINT);
+        drawHeightMap();
+        generateBorders();
     }
 }
 
@@ -112,7 +134,6 @@ function squareStep(topX, topY, size, rd) {
 
     index.x = (size + 1)  / 2 + topX - 1; 
     index.y = (size + 1)  / 2 + topY - 1; 
-
     grid[index.x][index.y].height = calculateAverage([
         
         grid[topX][topY].height, //top letf corner
@@ -142,10 +163,8 @@ function diamondStep(topX, topY, size, rd) {
 
 function shrinkRangeRandom() {
 
-    let new_range_random = [];
-    new_range_random[0] = range_random[0] * SHRINK_COEFF_RANDOM;
-    new_range_random[1] = range_random[1] * SHRINK_COEFF_RANDOM;
-    range_random = new_range_random
+    current_range_random[0] = current_range_random[0] * SHRINK_COEFF_RANDOM;
+    current_range_random[1] = current_range_random[1] * SHRINK_COEFF_RANDOM;
 }
 
 function drawHeightMap() {
@@ -155,9 +174,8 @@ function drawHeightMap() {
         for (let y = 0; y < GRID_SIZE; y++) {
             
             let height = Math.round(grid[x][y].height)
-            if (height < range_height[0]) {height = range_height[0];}
-            if (height > range_height[1]) {height = range_height[1];}
-            //print(height);
+            if (height < RANGE_HEIGHT[0]) {height = RANGE_HEIGHT[0];}
+            if (height > RANGE_HEIGHT[1]) {height = RANGE_HEIGHT[1];}
             let col = color(COLOR_MAP[height]);
             fill(col);
             rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
@@ -278,23 +296,23 @@ function getRndInteger(min, max) {
 
 function getRdmHeight() {
 
-    return getRndInteger(range_height[0], range_height[1]);
+    return getRndInteger(RANGE_HEIGHT[0], RANGE_HEIGHT[1]);
 }
 
 function getRdm() {
 
-    return getRndInteger(range_random[0], range_random[1]);
+    return getRndInteger(current_range_random[0], current_range_random[1]);
 }
 
 function roundHeight(height) {
 
     let res = Math.round(height);
 
-    if (res < range_height[0])
-        return range_height[0];
+    if (res < RANGE_HEIGHT[0])
+        return RANGE_HEIGHT[0];
 
-    if (res > range_height[1])
-        return range_height[1];
+    if (res > RANGE_HEIGHT[1])
+        return RANGE_HEIGHT[1];
 
     return res;
 }

@@ -1,0 +1,17 @@
+body {
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+
+#map {
+    border: 2px solid black;
+}
+
+#left {
+    float: left;
+}
+
+#right {
+    font-size: 22px;
+    float: left;
+    margin-left: 10px;
+}
