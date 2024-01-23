@@ -31,6 +31,7 @@ body {
     display: table;
     border: 1px solid black;
     padding: 20px;
+    background: #e0e0e0;
 }
 
 .line-legend {
@@ -46,7 +47,6 @@ body {
     vertical-align: middle;
 }
 
-
 .legend-name {
     display: table-cell;
     padding-left: 12px;
@@ -55,4 +55,13 @@ body {
 .legend-percent {
     display: table-cell;
     padding-left: 20px;
+}
+
+#creator {
+    margin-top: 60px;
+}
+
+#creator .yt a{
+
+    color:#CC0000;
 }
