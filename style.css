@@ -13,5 +13,46 @@ body {
 #right {
     font-size: 22px;
     float: left;
-    margin-left: 10px;
+    margin-left: 20px;
+}
+
+.key {
+    font-weight: bold;
+    color:#e19110;
+}
+
+#title-legend {
+    font-style: italic;
+    font-weight: bold;
+}
+
+#legend {
+    margin: 10px 0 0 0px;
+    display: table;
+    border: 1px solid black;
+    padding: 20px;
+}
+
+.line-legend {
+    width: 100%;
+    display: table-row;
+    height: 40px;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border: 2px solid black;
+    vertical-align: middle;
+}
+
+
+.legend-name {
+    display: table-cell;
+    padding-left: 12px;
+}
+
+.legend-percent {
+    display: table-cell;
+    padding-left: 20px;
 }

@@ -7,7 +7,7 @@ function setup() {
     OFFSET_Y = 40;
     INTERACTIVE_MODE = false; //If true, can see steps hitting RIGHT_ARROW
     COLOR_MAP = {
-        1:"#052F66", // very deep sea
+        1:"#052F66", // abyss
         2:"#004AAD", // deep sea
         3:"#38B6FF", // sea
         4:"#0CC0DF", // lagoon
@@ -33,6 +33,7 @@ function setup() {
     current_range_random = [...RANGE_RANDOM];
     step = 1;
     tmp_size = GRID_SIZE; // for interactive mode
+    color_map = new ColorMap();
 
     let cvn = createCanvas(GRID_SIZE*TILE_SIZE, GRID_SIZE*TILE_SIZE);
     cvn.id('map');
@@ -45,6 +46,7 @@ function setup() {
         fixHeightAlonePoints(FIX_HEIGHT_ALONE_POINT);
         drawHeightMap();
         generateBorders();
+        color_map.setLegend(GRID_SIZE*GRID_SIZE);
     }
 }
 
@@ -100,12 +102,14 @@ function keyReleased() {
 
         step = 1;
         current_range_random = [...RANGE_RANDOM];
-
+        color_map = new ColorMap();
+        
         initGrid();
         calculateHeights(GRID_SIZE);
         fixHeightAlonePoints(FIX_HEIGHT_ALONE_POINT);
         drawHeightMap();
         generateBorders();
+        color_map.setLegend(GRID_SIZE*GRID_SIZE);
     }
 }
 
@@ -176,11 +180,16 @@ function drawHeightMap() {
             let height = Math.round(grid[x][y].height)
             if (height < RANGE_HEIGHT[0]) {height = RANGE_HEIGHT[0];}
             if (height > RANGE_HEIGHT[1]) {height = RANGE_HEIGHT[1];}
-            let col = color(COLOR_MAP[height]);
+            let col = color(color_map.getHeightColor(height));
             fill(col);
             rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
         }
     }
+}
+
+function fillStats(height) {
+
+    stats[height]
 }
 
 function generateBorders() {
