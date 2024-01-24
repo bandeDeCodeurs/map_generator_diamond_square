@@ -6,24 +6,6 @@ function setup() {
     OFFSET_X = 40;
     OFFSET_Y = 40;
     INTERACTIVE_MODE = false; //If true, can see steps hitting RIGHT_ARROW
-    COLOR_MAP = {
-        1:"#052F66", // abyss
-        2:"#004AAD", // deep sea
-        3:"#38B6FF", // sea
-        4:"#0CC0DF", // lagoon
-        5:"#5CE1E6", // transparent water
-        6:"#FFDE59", // beach
-        7:"#FFBD59", // sand/land
-        8:"#C28221", // land
-        9:"#96651B", // mud
-        10:"#7ED957",// light grass
-        11:"#05AD5C",// grass
-        12:"#545454",// dark rock
-        13:"#737373",// grey rock
-        14:"#A6A6A6",// light grey rock
-        15:"#D9D9D9",// very light grey rock
-        16:"#FFFFFF" // snow
-    }
     SHRINK_COEFF_RANDOM = .45;
     FIX_HEIGHT_ALONE_POINT = 8; //cell surrounded by X different heights will be one of them
     RANGE_HEIGHT = [1, 16];
@@ -52,8 +34,6 @@ function setup() {
 
 function draw() {
 
-    //clear();
-    //displayDebug();
 }
 
 function calculateHeights(size) {
@@ -103,7 +83,7 @@ function keyReleased() {
         step = 1;
         current_range_random = [...RANGE_RANDOM];
         color_map = new ColorMap();
-        
+
         initGrid();
         calculateHeights(GRID_SIZE);
         fixHeightAlonePoints(FIX_HEIGHT_ALONE_POINT);
