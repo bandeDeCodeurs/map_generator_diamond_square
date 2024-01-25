@@ -38,12 +38,10 @@ function draw() {
 
 function calculateHeights(size) {
 
-    let rd = getRdm();
-
     for (let x=0;x<2**(step-1);x++){
         for (let y=0;y<2**(step-1);y++){
-            squareStep(x * (size - 1), y * (size - 1), size, rd);
-            diamondStep(x * (size - 1), y * (size - 1), size, rd);
+            squareStep(x * (size - 1), y * (size - 1), size);
+            diamondStep(x * (size - 1), y * (size - 1), size);
         }
     }
 
@@ -112,8 +110,9 @@ function initGrid() {
     }
 }
 
-function squareStep(topX, topY, size, rd) {
+function squareStep(topX, topY, size) {
 
+    let rd = getRdm();
     let index = {};
 
     index.x = (size + 1)  / 2 + topX - 1; 
@@ -127,7 +126,7 @@ function squareStep(topX, topY, size, rd) {
     ]) + rd;
 }
 
-function diamondStep(topX, topY, size, rd) {
+function diamondStep(topX, topY, size,) {
 
     let tl = grid[topX][topY].height; //top left
     let tr = grid[topX + size-1][topY].height; //top right
@@ -136,12 +135,16 @@ function diamondStep(topX, topY, size, rd) {
     let center = grid[(size - 1) / 2 + topX][(size - 1) / 2 + topY].height //center
 
     //top
+    let rd = getRdm();
     grid[(size - 1) / 2 + topX][topY].height = calculateAverage([tl,tr,center]) + rd;
     //right
+    rd = getRdm();
     grid[topX + size-1][(size - 1) / 2 + topY].height = calculateAverage([tr,br,center]) + rd;
     //bottom
+    rd = getRdm();
     grid[(size - 1) / 2 + topX][size - 1 + topY].height = calculateAverage([br,bl,center]) + rd;
     //left
+    rd = getRdm();
     grid[topX][(size - 1) / 2 + topY].height = calculateAverage([bl,tl,center]) + rd;
 }
 
@@ -157,9 +160,7 @@ function drawHeightMap() {
     for (let x = 0; x < GRID_SIZE; x++) {
         for (let y = 0; y < GRID_SIZE; y++) {
             
-            let height = Math.round(grid[x][y].height)
-            if (height < RANGE_HEIGHT[0]) {height = RANGE_HEIGHT[0];}
-            if (height > RANGE_HEIGHT[1]) {height = RANGE_HEIGHT[1];}
+            let height = roundHeight(grid[x][y].height)
             let col = color(color_map.getHeightColor(height));
             fill(col);
             rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
@@ -316,7 +317,6 @@ function debugGrid() {
 }
 
 function calculateAverage(array) { 
-    //return Math.round(array.reduce((sum, current) => sum + current) / array.length); 
     return (array.reduce((sum, current) => sum + current) / array.length); 
 }
 
