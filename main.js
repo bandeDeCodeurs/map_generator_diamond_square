@@ -6,10 +6,10 @@ function setup() {
     OFFSET_X = 40;
     OFFSET_Y = 40;
     INTERACTIVE_MODE = false; //If true, can see steps hitting RIGHT_ARROW
-    SHRINK_COEFF_RANDOM = .45;
+    SHRINK_COEFF_RANDOM = .42;
     FIX_HEIGHT_ALONE_POINT = 8; //cell surrounded by X different heights will be one of them
     RANGE_HEIGHT = [1, 16];
-    RANGE_RANDOM = [-8, 4];
+    RANGE_RANDOM = [-4, 4];
 
     grid = [];
     current_range_random = [...RANGE_RANDOM];
