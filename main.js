@@ -16,6 +16,7 @@ function setup() {
     step = 1;
     tmp_size = GRID_SIZE; // for interactive mode
     color_map = new ColorMap();
+    display_borders = true;
 
     let cvn = createCanvas(GRID_SIZE*TILE_SIZE, GRID_SIZE*TILE_SIZE);
     cvn.id('map');
@@ -88,6 +89,14 @@ function keyReleased() {
         drawHeightMap();
         generateBorders();
         color_map.setLegend(GRID_SIZE*GRID_SIZE);
+    }
+
+    //b key
+    if (keyCode === 66) {
+
+        display_borders = !display_borders;
+        drawHeightMap();
+        generateBorders();
     }
 }
 
@@ -178,32 +187,35 @@ function generateBorders() {
     for (let cx=0;cx<GRID_SIZE;cx++) {
         for (let cy=0;cy<GRID_SIZE;cy++) {
         
-            let height = roundHeight(grid[cx][cy].height);
+        let height = roundHeight(grid[cx][cy].height);
 
-            //If that's a beach
-            if (height == 6) {
-                //we take four neigbours
-                north = {dir:"north", x:cx, y:cy-1};
-                east  = {dir:"east", x:cx+1, y:cy};
-                south = {dir:"south", x:cx, y:cy+1};
-                west  = {dir:"west", x:cx-1, y:cy};
+            //we take four neigbours
+            north = {dir:"north", x:cx, y:cy-1};
+            east  = {dir:"east", x:cx+1, y:cy};
+            south = {dir:"south", x:cx, y:cy+1};
+            west  = {dir:"west", x:cx-1, y:cy};
 
-                neighbours = [north, east, south, west];
+            neighbours = [north, east, south, west];
 
-                neighbours.forEach(n => {
-                    
-                    //we only want a neighbour in the map and only water
-                    if (n.x != -1 && 
-                        n.y != -1 && 
-                        n.x != GRID_SIZE && 
-                        n.y != GRID_SIZE && 
-                        roundHeight(grid[n.x][n.y].height) == 5
-                        ) {
+            neighbours.forEach(n => {
+                
+                //we only want a neighbour in the map and we don't want to border water
+                if (n.x != -1 && 
+                    n.y != -1 && 
+                    n.x != GRID_SIZE && 
+                    n.y != GRID_SIZE && 
+                    roundHeight(grid[n.x][n.y].height) == height - 1 &&
+                    roundHeight(grid[n.x][n.y].height) >= 5
+                    ) {
+                        let c;
+                        if (display_borders)
+                            c = ColorLuminance(color_map.getHeightColor(height),-.2)
+                        else
+                            c = color_map.getHeightColor(height);
 
-                        traceBorder(cx, cy, n.dir, "#DAFEFF");
-                    }
-                });
-            }
+                    traceBorder(cx, cy, n.dir, c);
+                }
+            });
         }
     }
 }
@@ -344,3 +356,20 @@ function displayDebug() {
         }
     }
 }
+
+function ColorLuminance(hex, lum) {
+    // validate hex string
+    hex = String(hex).replace(/[^0-9a-f]/gi, '');
+    if (hex.length < 6) {
+      hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+    }
+    lum = lum || 0;
+    // convert to decimal and change luminosity
+    var rgb = "#", c, i;
+    for (i = 0; i < 3; i++) {
+      c = parseInt(hex.substr(i*2,2), 16);
+      c = Math.round(Math.min(Math.max(0, c + (c * lum)), 255)).toString(16);
+      rgb += ("00"+c).substr(c.length);
+    }
+    return rgb;
+  }
