@@ -3,13 +3,14 @@ function setup() {
     SIZE = 8; // !!! Should not exceed 8
     GRID_SIZE = 2**SIZE + 1; // Final size map
     TILE_SIZE = 3;
-    OFFSET_X = 40;
-    OFFSET_Y = 40;
-    INTERACTIVE_MODE = false; //If true, can see steps hitting RIGHT_ARROW
     SHRINK_COEFF_RANDOM = .42;
     FIX_HEIGHT_ALONE_POINT = 8; //cell surrounded by X different heights will be one of them
     RANGE_HEIGHT = [1, 16];
     RANGE_RANDOM = [-4, 4];
+    //--Interactive Mode--
+    OFFSET_X = 40;
+    OFFSET_Y = 40;
+    INTERACTIVE_MODE = false; //If true, can see steps hitting RIGHT_ARROW
 
     grid = [];
     current_range_random = [...RANGE_RANDOM];
@@ -346,7 +347,7 @@ function displayDebug() {
             textSize(16);
             text("("+x+","+y+")", posX-diameter/2, posY - diameter);
 
-            let c = (grid[x][y].height >= 0) ? color(0, 204, 0) : color(204, 0, 0);
+            let c = (grid[x][y].height > 0) ? color(0, 204, 0) : color(204, 0, 0);
             fill(c);
             circle(posX, posY, diameter);
 
