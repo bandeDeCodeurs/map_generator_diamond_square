@@ -6,5 +6,4 @@ class Point {
         this.posY = y;
         this.height = h;
     }
-    
 }

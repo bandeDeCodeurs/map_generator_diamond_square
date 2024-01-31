@@ -3,10 +3,10 @@ function setup() {
     SIZE = 8; // !!! Should not exceed 8
     GRID_SIZE = 2**SIZE + 1; // Final size map
     TILE_SIZE = 3;
-    SHRINK_COEFF_RANDOM = .42;
-    FIX_HEIGHT_ALONE_POINT = 8; //cell surrounded by X different heights will be one of them
     RANGE_HEIGHT = [1, 16];
     RANGE_RANDOM = [-4, 4];
+    SHRINK_COEFF_RANDOM = .42;
+    FIX_HEIGHT_ALONE_POINT = 8; //cell surrounded by X different heights will be one of them
     //--Interactive Mode--
     OFFSET_X = 40;
     OFFSET_Y = 40;
@@ -24,80 +24,13 @@ function setup() {
     cvn.parent("left");
 
     initGrid();
-
+    
     if (!INTERACTIVE_MODE) {
         calculateHeights(GRID_SIZE);
         fixHeightAlonePoints(FIX_HEIGHT_ALONE_POINT);
         drawHeightMap();
         generateBorders();
         color_map.setLegend(GRID_SIZE*GRID_SIZE);
-    }
-}
-
-function draw() {
-
-}
-
-function calculateHeights(size) {
-
-    for (let x=0;x<2**(step-1);x++){
-        for (let y=0;y<2**(step-1);y++){
-            squareStep(x * (size - 1), y * (size - 1), size);
-            diamondStep(x * (size - 1), y * (size - 1), size);
-        }
-    }
-
-    step++;
-    shrinkRangeRandom();
-
-    if (INTERACTIVE_MODE) {
-
-        return ((size + 1) / 2);
-    } else {
-
-        if (size > 3) {
-            calculateHeights((size + 1) / 2);
-        }
-    }
-}
-
-function keyReleased() {
-
-    if (keyCode === RIGHT_ARROW && INTERACTIVE_MODE) {
-
-        if (tmp_size >= 3){
-
-            tmp_size = calculateHeights(tmp_size);
-        }
-    }
-
-    if (keyCode === RETURN) {
-
-        let timeStamp = year() + "-" + month() + "-" + day() + "-" + hour() + "-" + minute() + "-" + second() + "-" + nf(millis(), 3, 0);
-
-        save(timeStamp + '.png');
-    }
-
-    if (keyCode === SHIFT) {
-
-        step = 1;
-        current_range_random = [...RANGE_RANDOM];
-        color_map = new ColorMap();
-
-        initGrid();
-        calculateHeights(GRID_SIZE);
-        fixHeightAlonePoints(FIX_HEIGHT_ALONE_POINT);
-        drawHeightMap();
-        generateBorders();
-        color_map.setLegend(GRID_SIZE*GRID_SIZE);
-    }
-
-    //b key
-    if (keyCode === 66) {
-
-        display_borders = !display_borders;
-        drawHeightMap();
-        generateBorders();
     }
 }
 
@@ -164,6 +97,29 @@ function shrinkRangeRandom() {
     current_range_random[1] = current_range_random[1] * SHRINK_COEFF_RANDOM;
 }
 
+function calculateHeights(size) {
+
+    for (let x=0;x<2**(step-1);x++){
+        for (let y=0;y<2**(step-1);y++){
+            squareStep(x * (size - 1), y * (size - 1), size);
+            diamondStep(x * (size - 1), y * (size - 1), size);
+        }
+    }
+
+    step++;
+    shrinkRangeRandom();
+
+    if (INTERACTIVE_MODE) {
+
+        return ((size + 1) / 2);
+    } else {
+
+        if (size > 3) {
+            calculateHeights((size + 1) / 2);
+        }
+    }
+}
+
 function drawHeightMap() {
 
     noStroke();
@@ -178,9 +134,46 @@ function drawHeightMap() {
     }
 }
 
-function fillStats(height) {
+function keyReleased() {
 
-    stats[height]
+    if (keyCode === RIGHT_ARROW && INTERACTIVE_MODE) {
+
+        if (tmp_size >= 3){
+            tmp_size = calculateHeights(tmp_size);
+            displayDebug();
+        }
+    }
+
+    if (keyCode === SHIFT) {
+
+        step = 1;
+        current_range_random = [...RANGE_RANDOM];
+        color_map = new ColorMap();
+
+        initGrid();
+        calculateHeights(GRID_SIZE);
+        fixHeightAlonePoints(FIX_HEIGHT_ALONE_POINT);
+        drawHeightMap();
+        generateBorders();
+        color_map.setLegend(GRID_SIZE*GRID_SIZE);
+    }
+
+    if (keyCode === RETURN) {
+
+        let timeStamp = 
+            year() + "-" + month() + "-" + day() + 
+            "-" + hour() + "-" + minute() + "-" + second() 
+            + "-" + nf(millis(), 3, 0);
+
+        save(timeStamp + '.png');
+    }
+    
+    //b key
+    if (keyCode === 66) {
+
+        display_borders = !display_borders;
+        generateBorders();
+    }
 }
 
 function generateBorders() {
@@ -274,7 +267,7 @@ function fixHeightAlonePoints(maxPoints) {
     }
 }
 
-//Helper fctos
+//Tools fctos
 function getNeighbours(cx,cy) {
 
     let res = [];
@@ -335,13 +328,16 @@ function calculateAverage(array) {
 
 function displayDebug() {
 
-    diameter = 20;
+    createCanvas(1200,800);
+
+    let diameter = 20;
+    let tile_size = 90;
 
     for (let x = 0; x < GRID_SIZE; x++) {
         for (let y = 0; y < GRID_SIZE; y++) {
             
-            let posX = OFFSET_X + x * TILE_SIZE;
-            let posY = OFFSET_Y + y * TILE_SIZE;
+            let posX = OFFSET_X + x * tile_size;
+            let posY = OFFSET_Y + y * tile_size;
 
             fill('black');
             textSize(16);
@@ -353,7 +349,7 @@ function displayDebug() {
 
             fill('black');
             textSize(16);
-            text(grid[x][y].height, posX-diameter/2, posY + diameter*2);
+            text((grid[x][y].height % 1 != 0) ? grid[x][y].height.toFixed(4) : grid[x][y].height, posX-diameter/2, posY + diameter*2);
         }
     }
 }
@@ -362,15 +358,15 @@ function ColorLuminance(hex, lum) {
     // validate hex string
     hex = String(hex).replace(/[^0-9a-f]/gi, '');
     if (hex.length < 6) {
-      hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+        hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
     }
     lum = lum || 0;
     // convert to decimal and change luminosity
     var rgb = "#", c, i;
     for (i = 0; i < 3; i++) {
-      c = parseInt(hex.substr(i*2,2), 16);
-      c = Math.round(Math.min(Math.max(0, c + (c * lum)), 255)).toString(16);
-      rgb += ("00"+c).substr(c.length);
+        c = parseInt(hex.substr(i*2,2), 16);
+        c = Math.round(Math.min(Math.max(0, c + (c * lum)), 255)).toString(16);
+        rgb += ("00"+c).substr(c.length);
     }
     return rgb;
-  }
+}
